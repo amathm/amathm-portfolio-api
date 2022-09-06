@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -euo pipefail
+
+export COMPONENT="amathm-portfolio-api"
+export DOCKER_BUILDKIT=1
+export CUCUMBER_PUBLISH_QUIET=true
+
+cd "$( dirname "${0}")"/..
+
+export COMPOSE_PROJECT_NAME=${RANDOM}
+export CUCUMBER_ARGS="$*"
+export WORKSPACE="${WORKSPACE:-$PWD/cucumber}"
+
+trap 'docker network rm ${COMPOSE_PROJECT_NAME}_default' 0
+
+docker build --progress=plain ./cucumber --tag ${COMPONENT}-cucumber:latest
+
+if [[ -z "${CUCUMBER_ARGS}" ]]
+    then
+    docker-compose run cucumber cucumber --dry-run --format=usage
+fi
+
+docker build --ssh=default ../src/ --tag "${COMPONENT}"
+docker-compose up --abort-on-container-exit --timeout 0

@@ -1,0 +1,26 @@
+openapi: 3.0.0
+info:
+  description: Api for portfolio [http://www.amathm.com] (http://www.amathm.com)
+  version: 1.0.0
+  title: Amathm API
+servers:
+  - url: https://amathm.api.com
+tags:
+  - name: amathm api
+paths:
+  /logins:
+    get:
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          description: An id
+
+      responses:
+        200:
+          description: Id
+          content:
+            application/json:
+              schema:
+                type: string
